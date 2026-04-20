@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(powershell -Command \".specify/scripts/powershell/setup-plan.ps1 -Json\")",
+      "Bash(powershell.exe *)",
+      "Bash(bash -c ' *)",
+      "Bash(echo \"---exit: $?\")",
+      "Bash(python -c ' *)",
+      "Bash(echo \"exit: $?\")",
+      "Bash(python *)",
+      "mcp__ide__getDiagnostics"
+    ]
+  }
+}

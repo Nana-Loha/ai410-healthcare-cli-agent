@@ -1,0 +1,16 @@
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python -c \"\nimport sys, json, re\ntry:\n    data = json.load(sys.stdin)\n    cmd = data.get('tool_input', {}).get('command', '')\n    pattern = r'git (commit|push|reset|rebase|clean|branch -[dD])|rm -[rf]+\\\\b|rmdir|deploy|DROP |DELETE FROM'\n    if re.search(pattern, cmd, re.IGNORECASE):\n        print(json.dumps({'hookSpecificOutput': {'hookEventName': 'PreToolUse', 'permissionDecision': 'ask', 'permissionDecisionReason': f'High-impact action detected: {cmd}'}}))\nexcept Exception:\n    pass\n\"",
+            "statusMessage": "Checking for high-impact action..."
+          }
+        ]
+      }
+    ]
+  }
+}
