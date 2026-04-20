@@ -11,4 +11,5 @@ dependencies = [
     "langgraph>=1.1.6",
     "llama-index>=0.14.20",
     "openai>=2.31.0",
+    "typer>=0.24.1",
 ]
