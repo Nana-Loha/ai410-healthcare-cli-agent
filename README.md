@@ -254,26 +254,13 @@ uv run pytest
 
 ### Project layout
 
-```
-src/
-├── cli/
-│   ├── main.py          # CLI entry point and subcommands
-│   └── output.py        # Rich-formatted output helpers
-├── providers/
-│   ├── base.py          # AIProvider protocol and ProviderFactory
-│   ├── claude.py        # Anthropic Claude adapter
-│   ├── gpt.py           # OpenAI GPT-4 adapter
-│   └── gemini.py        # Google Gemini adapter
-├── services/
-│   ├── symptoms.py      # Symptom analysis service
-│   ├── summarizer.py    # Medical record summarization service
-│   └── interactions.py  # Drug interaction service
-└── config.py            # Config loading and Session model
 
-tests/
-├── unit/
-├── integration/
-└── contract/
+```
+main.py              # CLI entry point (symptoms, summarize, interactions, config)
+pyproject.toml       # Project config and dependencies
+specs/               # Spec Kit artifacts (spec, plan, tasks, data-model)
+.claude/             # Claude Code skills and hooks
+
 ```
 
 ### Contribution guidelines
