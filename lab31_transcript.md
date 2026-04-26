@@ -1,6 +1,6 @@
 # Lab 3.1 — Prompt Transcript Highlights
 
-## Prompt ที่ใช้
+## Prompt 
 "I want to add a --output flag to this CLI healthcare agent.
 Requirements: [...]
 Show me what files you plan to modify before making changes."
