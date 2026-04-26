@@ -1,14 +1,15 @@
 import typer
 from pathlib import Path
+from typing import Optional
 
 app = typer.Typer()
 
 
-def _print_and_optionally_save(response_text: str, output: str) -> None:
+def _print_and_optionally_save(response_text: str, output: Optional[str]) -> None:
     """Print response text and optionally persist the exact same content."""
     print(response_text)
 
-    if not output:
+    if output is None:
         return
 
     output_path = Path(output)
@@ -27,7 +28,7 @@ def _print_and_optionally_save(response_text: str, output: str) -> None:
 @app.command()
 def symptoms(
     input: str = typer.Option(..., help="Free-form symptom description"),
-    output: str = typer.Option("", help="Optional path to save results as .txt"),
+    output: Optional[str] = typer.Option(None, help="Optional path to save results as .txt"),
 ):
     """Check symptoms and get possible conditions."""
     response_text = (
@@ -39,8 +40,11 @@ def symptoms(
 @app.command()
 def summarize(input: str = typer.Option("", help="Inline record text"),
               file: str = typer.Option("", help="Path to medical record file"),
-              output: str = typer.Option("", help="Optional path to save results as .txt")):
+              output: Optional[str] = typer.Option(None, help="Optional path to save results as .txt")):
     """Summarize a medical record."""
+    if input and file:
+        print("Please provide either --input or --file, not both")
+        raise typer.Exit(code=4)
     if not input and not file:
         print("Please provide --input or --file")
         raise typer.Exit(code=1)
@@ -54,11 +58,15 @@ def summarize(input: str = typer.Option("", help="Inline record text"),
 @app.command()
 def interactions(
     drugs: str = typer.Option("", help="Comma-separated drug names"),
-    output: str = typer.Option("", help="Optional path to save results as .txt"),
+    output: Optional[str] = typer.Option(None, help="Optional path to save results as .txt"),
 ):
     """Check drug interactions."""
     if not drugs:
         print("Please provide --drugs")
+        raise typer.Exit(code=1)
+    drug_list = [drug.strip() for drug in drugs.split(",") if drug.strip()]
+    if len(drug_list) < 2:
+        print("Please provide at least 2 drugs (comma-separated)")
         raise typer.Exit(code=1)
     response_text = (
         f"Checking interactions for: {drugs}\n"
