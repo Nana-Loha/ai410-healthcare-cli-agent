@@ -1,27 +1,38 @@
-# Lab 3.2 — Cursor vs VSCode Copilot Comparison
+# Lab 3.2 - Cursor vs VSCode Copilot Comparison
 
 ## Feature Tested
-- Lab 3.1: --output flag (VSCode Copilot)
-- Lab 3.2: --format flag (Cursor)
+Same prompt used in both tools:
+"Build the medical record summarization feature as defined 
+in SPEC.md. Use LlamaIndex for processing and ensure no 
+data is stored as per FR-004."
 
 ## Planning Quality
-- VSCode: Listed files to modify before making any changes
-- Cursor: Showed inline diff before asking to Keep
+- VSCode: Read files one by one before making changes.
+  No explicit plan document created.
+- Cursor: Explored 9 files and 7 searches automatically.
+  Generated a dedicated plan file with 4 structured 
+  to-dos before writing any code.
+  Winner: Cursor - more thorough upfront planning.
 
 ## Edit Quality
-- VSCode: +47/-9 lines, clean with no code duplication
-- Cursor: +25/-13 lines, added constants and helper functions
+- VSCode: main.py (+47/-9) clean edits, no duplication
+- Cursor: Plan Mode only - showed src/ layout with 
+  separate modules: src/models/records.py and 
+  src/services/summarizer.py
 
 ## Verification Behavior
-- VSCode: Ran actual terminal commands, requested Allow for each step
-- Cursor: Verified in chat only, did not run terminal commands
-- Cursor additionally flagged a Windows encoding bug
+- VSCode: Ran actual terminal commands automatically.
+  Requested Allow/Skip permission before each step.
+  Ran 3 validation tests automatically.
+- Cursor: Used Plan Mode - verified via web search 
+  for LlamaIndex API before writing code.
+  Did not run terminal commands in Plan Mode.
 
 ## Model Choice Rationale
-- VSCode: GPT-5.3-Codex
-- Cursor: Auto (model not explicitly shown)
+- VSCode: Auto (VSCode Copilot default)
+- Cursor: Auto (shown at bottom of Agent panel)
 
 ## Summary
-Cursor is faster with a smoother UX.
-VSCode Copilot performs more thorough verification
+Cursor Plan Mode provides more structured upfront planning.
+VSCode Copilot performs more thorough runtime verification
 by running actual terminal commands at each step.
