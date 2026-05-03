@@ -1,0 +1,12 @@
+{
+  "servers": {
+    "filesystem": {
+      "type": "stdio",
+      "command": "npx",
+      "args": [
+        "@modelcontextprotocol/server-filesystem",
+        "C:\\Users\\pitch\\ai410"
+      ]
+    }
+  }
+}
