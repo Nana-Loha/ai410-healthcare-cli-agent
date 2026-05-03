@@ -168,9 +168,10 @@ MCP integration was successfully demonstrated in both CLI and IDE environments, 
 Overall, Claude Sonnet 4.6 is recommended as the primary model for Sprint 2 due to its strong coding performance, reliable tool use, and alignment with MCP-based agent workflows. Supporting models, including GPT-5.4 and Gemini 3.1 Pro, will be used for benchmarking and specialized tasks, ensuring a balanced and robust multi-model strategy.
 
 
-References
-•	Anthropic. Claude Sonnet 4.6 / Opus 4.6 Model Card. Anthropic, 2026.
-•	OpenAI. GPT-5 System Documentation. OpenAI, 2026.
-•	Google. Gemini 3.1 Pro Technical Report. Google DeepMind, 2026.
-•	OpenAI. o3 Technical Report. OpenAI, 2026.
-•	AI410 Spring 2026 Course Materials — Week 3 Readings and Model Comparison Resources.
+## References
+
+1. Anthropic. *Claude Sonnet 4.6 / Opus 4.6 Model Card*. Anthropic, 2026.
+2. OpenAI. *GPT-5 System Documentation*. OpenAI, 2026.
+3. Google DeepMind. *Gemini 3.1 Pro Technical Report*. Google, 2026.
+4. OpenAI. *o3 Technical Report*. OpenAI, 2026.
+5. AI410 Spring 2026. *Week 3 Readings and Model Comparison Resources*. Bellevue College, 2026.
