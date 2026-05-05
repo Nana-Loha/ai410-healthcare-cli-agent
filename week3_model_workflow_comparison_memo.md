@@ -4,26 +4,29 @@ The purpose of this memo is to compare frontier AI models and development workfl
 
 ## 2. Frontier Model Comparison
 
-The following comparison evaluates four frontier AI models across five key dimensions: context window, reasoning quality, latency, cost, and safety behavior. The analysis is based on course materials and benchmark references.
+The following comparison evaluates five frontier AI models across five key dimensions: context window, reasoning quality, latency, cost, and safety behavior. The analysis is based on course materials and benchmark references.
 
 | Model | Context | Reasoning | Latency | Cost | Safety |
-|------|--------|----------|--------|------|--------|
-| Claude Sonnet 4.6 | ~1M tokens | Strong coding performance; SWE-bench ~80.8%; MCP-native | Medium | Medium | Confirmation gates; HITL controls; policy-aligned refusals |
+|---|---|---|---|---|---|
+| Claude Opus 4.6 | ~1M tokens | Highest capability; SWE-bench Verified 80.8% (Rank 2); deep reasoning for complex tasks | Slow | High | Confirmation gates; HITL controls; policy-aligned refusals |
+| Claude Sonnet 4.6 | ~1M tokens | Balanced coding performance; MCP-native; strong agent workflow support | Medium | Medium | Confirmation gates; HITL controls; policy-aligned refusals |
 | GPT-5.4 | ~1M tokens; 128K output | Strong general reasoning; integrated reasoning mode | Fast | High | Strong content filtering; OpenAI policy alignment |
-| Gemini 3.1 Pro | ~1M tokens | Strong long-context and retrieval; 77.1% ARC-AGI-2; 94.3% GPQA | Medium | Medium | Google safety filters; grounding checks |
+| Gemini 3.1 Pro | ~1M tokens | Strong long-context and retrieval; 77.1% ARC-AGI-2; 94.3% GPQA Diamond | Medium | Medium | Google safety filters; grounding checks |
 | o3 | Standard context | Dedicated reasoning for math, science, and coding | Slow | High | Strong alignment; high deliberation quality |
 
-The comparison shows that GPT-5.4 provides strong reasoning performance and fast response times, making it suitable for general-purpose and reasoning-heavy tasks. However, it has higher cost, which may limit scalability.
+> **Source:** AI410 Spring 2026 Syllabus Appendix — SWE-bench Verified Leaderboard (March 2026).
 
-Claude Sonnet 4.6 offers a balanced performance with strong coding quality and reliable tool usage. Its MCP-native capabilities and safety features make it well-suited for agent-based workflows.
+Claude Opus 4.6 achieves the highest SWE-bench Verified score among Anthropic models at 80.8% (Rank 2 overall), making it best suited for safety-critical and reasoning-heavy tasks. Claude Sonnet 4.6 offers balanced performance at lower cost, making it the primary model for general agent workflows.
 
-Gemini 3.1 Pro excels in handling long-context inputs and retrieval-based tasks, supported by strong benchmark results. However, its reasoning consistency may vary compared to GPT-5.4.
+GPT-5.4 provides strong reasoning performance and fast response times, making it suitable for general-purpose and reasoning-heavy tasks. However, it has higher cost, which may limit scalability.
 
-In contrast, o3 is optimized for deep reasoning tasks such as mathematics and scientific problem-solving. While it delivers high-quality reasoning, it has higher latency and cost, making it less suitable for real-time applications.
+Gemini 3.1 Pro excels in handling long-context inputs and retrieval-based tasks, supported by strong benchmark results on ARC-AGI-2 (77.1%) and GPQA Diamond (94.3%).
 
-Overall, each model presents tradeoffs between reasoning quality, speed, and cost. Claude Sonnet 4.6 stands out as a balanced option, GPT-5.4 is strong for general reasoning tasks, and o3 is best suited for specialized complex problem-solving.
+o3 is optimized for deep reasoning tasks such as mathematics and scientific problem-solving. While it delivers high-quality reasoning, it has higher latency and cost, making it less suitable for real-time applications.
 
-"Note: Latency and cost are based on published documentation. Empirical measurement will be conducted in Week 4 benchmarking."
+Overall, each model presents tradeoffs between reasoning quality, speed, and cost. Claude Opus 4.6 is best for safety-critical tasks, Claude Sonnet 4.6 stands out as the balanced primary model, GPT-5.4 is strong for general reasoning, and o3 is best suited for specialized complex problem-solving.
+
+> **Note:** Latency and cost are based on published documentation. Empirical measurement will be conducted in Week 4 benchmarking.
 
 
 
