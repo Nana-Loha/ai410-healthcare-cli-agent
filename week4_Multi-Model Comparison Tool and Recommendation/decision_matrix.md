@@ -12,28 +12,33 @@
 
 ---
 
-# Recommendation
+## Recommendation
 
-Claude Sonnet 4.6 is recommended as the primary model for the Sprint 2 medical AI assistant workflow. During benchmarking, it demonstrated the strongest autonomous software engineering behavior, including proactive test generation, iterative debugging, multi-file implementation, pytest validation, and strong specification-awareness tied to FR-003 through FR-006 requirements.
+Claude Sonnet 4.6 is recommended as the primary model for the Sprint 2 Medical AI Assistant workflow.
 
-GPT-5.4 demonstrated excellent reasoning and specification-review capability, especially for privacy and compliance analysis. However, it showed significantly higher latency during complex summarization tasks, making it less efficient for rapid iterative workflows.
+## Key Findings
 
-Gemini 3.1 Pro demonstrated the fastest response times and consistently structured outputs. However, it showed less autonomous tool-use and verification behavior compared to Claude Sonnet 4.6.
+### Engineering Autonomy
+During benchmarking, Claude Sonnet 4.6 demonstrated the strongest autonomous software engineering behavior, including proactive test generation, iterative debugging, multi-file implementation, and automated verification workflows.
 
-Overall, Claude Sonnet 4.6 provided the best balance of:
-- coding capability
-- reasoning quality
-- workflow automation
-- latency
-- responsible AI awareness
-- MCP/tool integration
+### Requirements Alignment
+It showed the strongest specification-awareness related to FR-003 through FR-006, helping ensure that privacy, safety, and clinical summarization requirements remained consistent throughout the implementation process.
 
-for the Sprint 2 project requirements.
+### Industry Alignment
+These observations are consistent with current industry benchmark trends. SWE-bench highlights Claude’s strong performance on real-world software engineering tasks, while LiveCodeBench demonstrates high reasoning quality in coding-oriented workflows. Its ability to manage files, execute tests, and maintain implementation consistency was particularly valuable for Sprint 2.
 
----
+## Alternative Model Observations
 
-# Benchmark Limitation
+### GPT-5.4
+GPT-5.4 demonstrated strong reasoning quality and excellent privacy/compliance analysis capabilities. However, benchmark observations showed significantly higher latency during long-context summarization workflows, reducing efficiency for rapid iterative development.
 
-This benchmark used a sequential shared-workspace evaluation. Earlier models created and modified implementation files and tests, which may have influenced later model performance by providing additional project context and structure.
+### Gemini 3.1 Pro
+Gemini 3.1 Pro demonstrated the fastest response times and consistently structured outputs. However, it showed less autonomous tool-use, testing behavior, and self-verification capability compared to Claude Sonnet 4.6.
 
-As a result, these findings should be interpreted as workflow-oriented comparative observations rather than fully isolated production-grade benchmark measurements.
+## Benchmark Limitations
+
+This evaluation used a sequential shared-workspace methodology. Earlier models created and modified implementation files and tests, meaning later models may have benefited from additional project context and existing structure.
+
+In addition, latency measurements were collected through a manual interactive workflow and may include minor human delays during prompt switching and response recording.
+
+Therefore, these findings should be interpreted as workflow-oriented comparative observations rather than fully isolated production-grade benchmark measurements.
