@@ -1,0 +1,15 @@
+model,task,latency_seconds,quality_score,notes
+Claude Sonnet 4.6,Medical Record Summarization,35.96,10,"Implemented and validated privacy-safe summarization workflow with strong FR-004 compliance reasoning."
+Claude Sonnet 4.6,Drug Interaction Reasoning,40.23,10,"Strong healthcare safety reasoning with clear human-in-the-loop justification."
+Claude Sonnet 4.6,Coding Validation,83.74,10,"Created robust validation module with automated tests and strong edge-case handling."
+Claude Sonnet 4.6,Responsible AI Risk,41.75,10,"Provided detailed responsible AI analysis with privacy and healthcare safety mitigations."
+
+GPT-5.4,Medical Record Summarization,405.33,10,"Performed deep specification review, implementation validation, and privacy compliance analysis."
+GPT-5.4,Drug Interaction Reasoning,58.74,9,"Provided clear reasoning on clinical risks and contextual limitations."
+GPT-5.4,Coding Validation,21.28,9,"Generated clear dosage validation logic with safe-range enforcement."
+GPT-5.4,Responsible AI Risk,22.55,9,"Provided concise responsible AI analysis with strong clinical oversight emphasis."
+
+Gemini 3.1 Pro,Medical Record Summarization,22.45,9,"Clearly summarized implementation details and privacy safeguards."
+Gemini 3.1 Pro,Drug Interaction Reasoning,39.04,9,"Provided well-structured explanation of interaction workflow risks."
+Gemini 3.1 Pro,Coding Validation,17.79,9,"Provided robust validation implementation with clear logic and documentation."
+Gemini 3.1 Pro,Responsible AI Risk,22.41,9,"Provided clear responsible AI mitigation strategies for healthcare deployment."

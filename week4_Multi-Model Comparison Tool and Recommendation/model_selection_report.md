@@ -1,0 +1,61 @@
+# Week 4 Model Selection Report
+
+## Benchmark Analysis
+
+This report evaluates candidate AI models for Sprint 2 using benchmark evidence, operational constraints, latency observations, and responsible AI considerations collected during Week 4 benchmarking.
+
+### Benchmark Interpretation
+
+| Benchmark | Purpose | Use in Decision |
+|---|---|---|
+| SWE-bench Verified | Measures software engineering issue resolution | Strong signal for coding agents |
+| SWE-bench Pro | Evaluates harder engineering tasks | Production robustness check |
+| HumanEval / LiveCodeBench | Measures coding and reasoning performance | Supplemental coding benchmark |
+| AIME / ARC-AGI-2 | Measures mathematical and abstract reasoning | Useful for reasoning-intensive tasks |
+| GPQA Diamond | Evaluates scientific reasoning | Important for medical and science-heavy systems |
+
+### Benchmark Pitfalls
+
+Benchmark scores should not be treated as absolute indicators of real-world performance. Risks include benchmark contamination, narrow task distributions, and cherry-picked reporting. High benchmark scores do not automatically guarantee production reliability, strong domain fit, or effective tool-use behavior.
+
+Additionally, this benchmark used a sequential shared-workspace workflow. Earlier models modified implementation files and tests, which may have influenced later model performance by providing additional project context and structure.
+
+## Model Selection Framework
+
+The Sprint 2 project includes coding-heavy, reasoning-heavy, and safety-critical healthcare workflows. Operational constraints such as latency, cost efficiency, MCP/tool workflow behavior, and responsible AI requirements were included in the selection process.
+
+### Claude Sonnet 4.6
+
+Claude Sonnet 4.6 demonstrated the strongest autonomous software engineering workflow during benchmarking. It proactively created tests, modified multiple project files, executed pytest validation, identified FR-004 privacy conflicts, and demonstrated strong specification-awareness tied to FR-003 through FR-006 requirements.
+
+Claude Sonnet 4.6 also provided a strong balance between:
+- coding capability
+- reasoning quality
+- tool-use behavior
+- automated verification
+- latency
+- cost efficiency
+
+making it the strongest overall model for the Sprint 2 workflow.
+
+### GPT-5.4
+
+GPT-5.4 demonstrated strong reasoning quality and specification-review capability, especially for privacy and compliance analysis. It provided detailed architectural explanations and implementation validation. However, latency during complex summarization tasks was significantly higher than the other models, making it less efficient for rapid iterative workflows.
+
+### Gemini 3.1 Pro
+
+Gemini 3.1 Pro demonstrated the fastest response times and consistently structured outputs. It performed well in concise summarization and risk analysis tasks. However, it demonstrated less autonomous tool-use and verification behavior compared to Claude Sonnet 4.6.
+
+## Conclusion
+
+The final model selection combines benchmark evidence with operational constraints and responsible AI considerations rather than relying on benchmark leadership alone.
+
+Based on the Week 4 benchmark results, Claude Sonnet 4.6 is recommended as the primary model for Sprint 2 because it provided the best overall balance between:
+- software engineering capability
+- reasoning quality
+- MCP/tool workflow support
+- automated verification behavior
+- latency
+- responsible AI awareness
+
+This supports a balanced and production-oriented multi-model strategy for the medical AI assistant workflow.

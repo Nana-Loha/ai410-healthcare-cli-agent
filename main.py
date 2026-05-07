@@ -3,8 +3,10 @@ import json
 from pathlib import Path
 from typing import Optional
 
+from summarizer import summarize_record
+
 app = typer.Typer()
-DISCLAIMER = "⚕️  This information is not a substitute for professional medical advice."
+DISCLAIMER = "This information is not a substitute for professional medical advice, diagnosis, or treatment."
 VALID_FORMATS = {"text", "json"}
 
 
@@ -54,20 +56,53 @@ def symptoms(
     _print_and_optionally_save(response_text, output)
 
 @app.command()
-def summarize(input: str = typer.Option("", help="Inline record text"),
-              file: str = typer.Option("", help="Path to medical record file"),
-              output: Optional[str] = typer.Option(None, help="Optional path to save results as .txt"),
-              format: str = typer.Option("text", "--format", help="Output format: text or json")):
-    """Summarize a medical record."""
+def summarize(
+    input: str = typer.Option("", help="Inline medical record text"),
+    file: str = typer.Option("", help="Path to a local medical record file"),
+    provider: str = typer.Option(
+        "",
+        "--provider",
+        help="Reserved for future provider-backed summarization; local mode is used to satisfy FR-004.",
+    ),
+    output: Optional[str] = typer.Option(None, help="Optional path to save summary as .txt"),
+    format: str = typer.Option("text", "--format", help="Output format: text or json"),
+):
+    """Summarize a medical record (diagnoses, medications, allergies, follow-ups).
+
+    Patient data is processed in-memory only and never persisted (FR-004).
+    """
     if input and file:
-        print("Please provide either --input or --file, not both")
+        typer.echo("Error: provide --input or --file, not both.", err=True)
         raise typer.Exit(code=4)
     if not input and not file:
-        print("Please provide --input or --file")
+        typer.echo("Error: provide --input <text> or --file <path>.", err=True)
         raise typer.Exit(code=1)
-    source = file if file else input
-    response_text = _build_response(f"Summarizing: {source}", format)
-    _print_and_optionally_save(response_text, output)
+    if output is not None:
+        typer.echo("Error: summarize does not support --output because FR-004 forbids persisting patient data.", err=True)
+        raise typer.Exit(code=4)
+
+    # Read record text into memory only — never write it to disk.
+    if file:
+        record_path = Path(file)
+        if not record_path.exists():
+            typer.echo(f"Error: file not found: {file}", err=True)
+            raise typer.Exit(code=2)
+        try:
+            record_text = record_path.read_text(encoding="utf-8")
+        except (OSError, UnicodeDecodeError) as exc:
+            typer.echo(f"Error: could not read file: {exc}", err=True)
+            raise typer.Exit(code=2)
+    else:
+        record_text = input
+
+    try:
+        summary = summarize_record(record_text)
+    except (ValueError, EnvironmentError) as exc:
+        typer.echo(f"Error: {exc}", err=True)
+        raise typer.Exit(code=3)
+
+    response_text = _build_response(summary, format)
+    print(response_text)
 
 @app.command()
 def interactions(
