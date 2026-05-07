@@ -160,15 +160,16 @@ Claude Sonnet 4.6 is selected as the primary model for Sprint 2 based on its str
 
 ### Validation Plan
 
-Claude Opus 4.6 is provisionally selected for drug interaction analysis due to its higher reasoning capability. A direct comparison between Opus 4.6 and Sonnet 4.6 will be conducted during Week 4 benchmarking to validate performance tradeoffs.
+Claude Opus 4.6 is provisionally selected for drug interaction analysis due to its higher reasoning capability and strong performance on complex safety-critical tasks. A direct comparison between Opus 4.6 and Sonnet 4.6 will be conducted during Week 4 benchmarking to validate tradeoffs in reasoning quality, latency, and operational cost.
 
 ### Summary
 
-The comparison demonstrates that VSCode Agent Mode and Cursor Composer provide complementary capabilities. VSCode Agent Mode is more effective for controlled, step-by-step implementation with integrated verification, while Cursor Composer is better suited for structured planning and early-stage design.
+The comparison demonstrates that VSCode Agent Mode and Cursor Composer provide complementary capabilities. VSCode Agent Mode is more effective for controlled, step-by-step implementation with integrated verification, while Cursor Composer is better suited for structured planning and early-stage system design.
 
-MCP integration was successfully demonstrated in both CLI and IDE environments, enabling agents to interact with local files through tool calls such as `mcp__filesystem__list_directory`. While setup is straightforward, permission controls introduce minor workflow overhead.
+MCP integration was successfully demonstrated in both CLI and IDE environments, enabling agents to interact with local files through tool calls such as `mcp__filesystem__list_directory`. While setup is relatively straightforward, permission controls introduce minor workflow overhead.
 
-Overall, Claude Sonnet 4.6 is recommended as the primary model for Sprint 2 due to its strong coding performance, reliable tool use, and alignment with MCP-based agent workflows. Supporting models, including GPT-5.4 and Gemini 3.1 Pro, will be used for benchmarking and specialized tasks, ensuring a balanced and robust multi-model strategy.
+Overall, Claude Sonnet 4.6 is recommended as the primary model for Sprint 2 due to its balanced tradeoff between coding performance, latency, cost, and reliable MCP-based tool usage. Supporting models, including GPT-5.4 and Gemini 3.1 Pro, will be used for benchmarking and specialized tasks, ensuring a balanced and robust multi-model strategy.
+
 
 
 ## References
