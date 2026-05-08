@@ -9,9 +9,7 @@ This report evaluates candidate AI models for Sprint 2 using benchmark evidence,
 | Benchmark | Purpose | Use in Decision |
 | :--- | :--- | :--- |
 | SWE-bench Verified | Measures software engineering issue resolution | Strong signal for coding agents |
-| SWE-bench Pro | Evaluates harder engineering tasks | Production robustness check |
 | HumanEval / LiveCodeBench | Measures coding and reasoning performance | Supplemental coding benchmark |
-| AIME / ARC-AGI-2 | Measures mathematical and abstract reasoning | Useful for reasoning-intensive tasks |
 | GPQA Diamond | Evaluates scientific reasoning | Important for medical and science-heavy systems |
 
 ### Benchmark Pitfalls
@@ -20,9 +18,9 @@ Benchmark scores should not be treated as absolute indicators of real-world perf
 
 Additionally, this benchmark used a sequential shared-workspace workflow. Earlier models modified implementation files and tests, which may have influenced later model performance by providing additional project context and structure.
 
-## Model Selection Framework
+## Model Evaluation Results
 
-The Sprint 2 project includes coding-heavy, reasoning-heavy, and safety-critical healthcare workflows. Operational constraints such as latency, cost efficiency, MCP/tool workflow behavior, and responsible AI requirements were included in the selection process.
+The Sprint 2 project includes coding-heavy, reasoning-heavy, and safety-critical healthcare workflows. Operational constraints such as latency, cost efficiency, MCP/tool workflow behavior, and responsible AI requirements were included in the selection process. The weighted decision criteria and scores are documented in the accompanying Decision Matrix (Lab 4.3).
 
 ### Claude Sonnet 4.6
 
@@ -55,11 +53,12 @@ Claude Opus 4.6 was provisionally selected for drug interaction analysis in the 
 The final model selection combines benchmark evidence with operational constraints and responsible AI considerations rather than relying on benchmark leadership alone.
 
 Based on the Week 4 benchmark results, Claude Sonnet 4.6 is recommended as the primary model for Sprint 2 because it provided the best overall balance between:
-- software engineering capability
+- coding capability
 - reasoning quality
-- MCP/tool workflow support
-- automated verification behavior
+- tool/MCP workflow behavior
+- automated verification
 - latency
 - responsible AI awareness
+- cost efficiency
 
 This supports a balanced and production-oriented multi-model strategy for the medical AI assistant workflow.

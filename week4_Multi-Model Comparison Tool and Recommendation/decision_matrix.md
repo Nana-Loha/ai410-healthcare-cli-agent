@@ -8,7 +8,9 @@
 | Latency / responsiveness | 15% | 8 | 5 | 10 |
 | Responsible AI awareness | 10% | 10 | 9 | 8 |
 | Cost efficiency | 5% | 8 | 6 | 9 |
-| **Total** | **100%** | **9.5** | **8.5** | **8.2** |
+| **Total** | **100%** | **9.6** | **8.5** | **8.2** |
+
+**Note:** Claude Opus 4.6 is excluded from this matrix because direct benchmarking was not conducted during Week 4 due to VS Code Copilot plan limitations. See the Model Selection Report for the full Opus 4.6 note.
 
 ---
 
