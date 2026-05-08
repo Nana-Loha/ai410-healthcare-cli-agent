@@ -7,12 +7,12 @@ The purpose of this memo is to compare frontier AI models and development workfl
 The following comparison evaluates five frontier AI models across five key dimensions: context window, reasoning quality, latency, cost, and safety behavior. The analysis is based on course materials and benchmark references.
 
 | Model | Context | Reasoning | Latency | Cost | Safety |
-|---|---|---|---|---|---|
+| :--- | :--- | :--- | :--- | :--- | :--- |
 | Claude Opus 4.6 | ~1M tokens | Highest capability; SWE-bench Verified 80.8% (Rank 2); deep reasoning for complex tasks | Slow | High | Confirmation gates; HITL controls; policy-aligned refusals |
 | Claude Sonnet 4.6 | ~1M tokens | Balanced coding performance; MCP-native; strong agent workflow support | Medium | Medium | Confirmation gates; HITL controls; policy-aligned refusals |
 | GPT-5.4 | ~1M tokens; 128K output | Strong general reasoning; integrated reasoning mode | Fast | High | Strong content filtering; OpenAI policy alignment |
 | Gemini 3.1 Pro | ~1M tokens | Strong long-context and retrieval; 77.1% ARC-AGI-2; 94.3% GPQA Diamond | Medium | Medium | Google safety filters; grounding checks |
-| o3 | Standard context | Dedicated reasoning for math, science, and coding | Slow | High | Strong alignment; high deliberation quality |
+| o3 | ~200K tokens | Dedicated reasoning for math, science, and coding | Slow | High | Strong alignment; high deliberation quality |
 
 > **Source:** AI410 Spring 2026 Syllabus Appendix — SWE-bench Verified Leaderboard (March 2026).
 
@@ -26,7 +26,7 @@ o3 is optimized for deep reasoning tasks such as mathematics and scientific prob
 
 Overall, each model presents tradeoffs between reasoning quality, speed, and cost. Claude Opus 4.6 is best for safety-critical tasks, Claude Sonnet 4.6 stands out as the balanced primary model, GPT-5.4 is strong for general reasoning, and o3 is best suited for specialized complex problem-solving.
 
-> **Note:** Latency and cost are based on published documentation. Empirical measurement will be conducted in Week 4 benchmarking.
+**Note:** Latency and cost are based on published documentation. Empirical measurement will be conducted in Week 4 benchmarking.
 
 
 
@@ -36,9 +36,8 @@ Both tools were given the same prompt:
 
 "Build the medical record summarization feature as defined in SPEC.md. Use LlamaIndex for processing and ensure no data is stored as per FR-004."
 
-### Evidence Summary
+### Evidence Summary: VSCode Copilot Agent
 
-**VSCode Agent Mode:**
 The agent began by locating and reading SPEC.md to understand the requirements. It explored the project structure and requested permission to access external files. The agent executed terminal commands (e.g., listing directories and files) to inspect the workspace.
 
 It then proceeded with implementation by modifying existing files, adding LlamaIndex-related imports, and integrating summarization logic while respecting the no-data-storage requirement. The agent also performed step-by-step verification, allowing the user to approve or skip actions.
@@ -52,17 +51,8 @@ It then proceeded with implementation by modifying existing files, adding LlamaI
 ![VSCode Agent Code](assets/lab31_code.png)
 *Figure 3: Agent added LlamaIndex imports*
 
-**Cursor Composer (Plan Mode):**
-Cursor Composer focused on planning rather than execution. It explored multiple project files and performed web searches (e.g., LlamaIndex documentation) to understand the feature requirements.
+### Evidence Summary: Cursor Composer (Plan Mode)
 
-It generated a structured plan, including proposed file organization (such as separating logic into modules like summarizer.py), but did not execute terminal commands or directly modify code in Plan Mode.
-
-### Evidence Summary (Cursor Composer)
-
-Prompt used:
-"Build the medical record summarization feature as defined in SPEC.md. Use LlamaIndex for processing and ensure no data is stored as per FR-004."
-
-Observed behavior:
 Cursor Composer focused on planning rather than direct implementation. It explored project files such as SPEC.md and tasks.md, identified that the repository was a stub, and analyzed the required feature scope.
 
 The agent also performed web searches to understand LlamaIndex APIs and relevant implementation patterns. It generated a structured development plan, including a proposed project layout (e.g., src/models, src/services) and a list of actionable tasks.
@@ -146,7 +136,7 @@ Additionally, MCP functionality depends on correct workspace configuration. If t
 
 ### Recommendation: Claude Sonnet 4.6 as Primary
 
-Claude Sonnet 4.6 is selected as the primary model for Sprint 2 based on its strong performance in coding tasks and reliable agent workflow support. It achieves a high SWE-bench Verified score (~80.8%) and provides balanced reasoning capability with efficient latency. In addition, its compatibility with MCP-based tool usage makes it well-suited for agent-driven development workflows.
+Claude Sonnet 4.6 is selected as the primary model for Sprint 2 based on its strong performance in coding tasks and reliable agent workflow support. It provides balanced reasoning capability with efficient latency and strong performance on software engineering tasks. Its compatibility with MCP-based tool usage makes it well-suited for agent-driven development workflows; MCP permission prompts will be managed using a project-level allowlist to reduce workflow overhead while preserving safety controls.
 
 ### Model Allocation by Feature
 
@@ -158,17 +148,15 @@ Claude Sonnet 4.6 is selected as the primary model for Sprint 2 based on its str
 | Provider fallback    | GPT-5.4           | Stable baseline model when Claude is unavailable (FR-002, FR-012)         |
 | Medical knowledge    | Gemini 3.1 Pro    | Strong performance on scientific and retrieval-oriented queries           |
 
+GPT-5.4 is selected as the provider fallback despite its higher cost because it offers strong general-purpose reasoning as a reliable cross-vendor baseline, satisfying the vendor-diversity requirement in FR-002 and FR-012. Gemini 3.1 Pro is reserved for medical knowledge tasks where retrieval capability is the primary requirement, making its medium cost appropriate for that allocation.
+
 ### Validation Plan
 
 Claude Opus 4.6 is provisionally selected for drug interaction analysis due to its higher reasoning capability and strong performance on complex safety-critical tasks. A direct comparison between Opus 4.6 and Sonnet 4.6 will be conducted during Week 4 benchmarking to validate tradeoffs in reasoning quality, latency, and operational cost.
 
 ### Summary
 
-The comparison demonstrates that VSCode Agent Mode and Cursor Composer provide complementary capabilities. VSCode Agent Mode is more effective for controlled, step-by-step implementation with integrated verification, while Cursor Composer is better suited for structured planning and early-stage system design.
-
-MCP integration was successfully demonstrated in both CLI and IDE environments, enabling agents to interact with local files through tool calls such as `mcp__filesystem__list_directory`. While setup is relatively straightforward, permission controls introduce minor workflow overhead.
-
-Overall, Claude Sonnet 4.6 is recommended as the primary model for Sprint 2 due to its balanced tradeoff between coding performance, latency, cost, and reliable MCP-based tool usage. Supporting models, including GPT-5.4 and Gemini 3.1 Pro, will be used for benchmarking and specialized tasks, ensuring a balanced and robust multi-model strategy.
+Claude Sonnet 4.6 is recommended as the primary model for Sprint 2 due to its balanced tradeoff between coding performance, latency, cost, and reliable MCP-based tool usage. Supporting models — Claude Opus 4.6 for safety-critical drug interaction analysis, GPT-5.4 for provider fallback, and Gemini 3.1 Pro for medical knowledge retrieval — form a multi-model strategy aligned with the feature requirements defined in Sprint 2.
 
 
 
