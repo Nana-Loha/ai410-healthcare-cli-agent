@@ -1,7 +1,7 @@
 # Lab 4.3 Decision Matrix
 
 | Criteria | Weight | Claude Sonnet 4.6 | GPT-5.4 | Gemini 3.1 Pro |
-|---|---:|---:|---:|---:|
+| :--- | ---: | ---: | ---: | ---: |
 | Coding capability | 30% | 10 | 9 | 8 |
 | Reasoning quality | 25% | 10 | 10 | 8 |
 | Tool/MCP workflow behavior | 15% | 10 | 9 | 7 |

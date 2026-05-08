@@ -1,7 +1,7 @@
 # Lab 4.4 Responsible AI Risk Review
 
 | Risk | Description | Mitigation |
-|---|---|---|
+| :--- | :--- | :--- |
 | Hallucination and Clinical Inaccuracy | The model may generate inaccurate, incomplete, or misleading medical information, including false drug interactions or incorrect symptom interpretations. | Require human review for high-risk outputs, include uncertainty language, cite sources (FR-006), and enforce confirmation workflows for severe interactions (FR-005). |
 | Privacy and API Transmission Risk | Medical records may contain sensitive patient information (PHI). Even without local storage, external AI providers may still receive patient data during API calls. | Enforce FR-004 no-data-storage policy, process data in-memory where possible, disable sensitive logging, redact identifiers before processing, and use zero-retention provider configurations when external APIs are required. |
 | Safety Refusal Mismatch | The model may refuse safe requests or provide unsafe recommendations with excessive confidence. | Add escalation rules, fallback validation workflows, human-in-the-loop review, and structured guardrails for safety-critical outputs. |
