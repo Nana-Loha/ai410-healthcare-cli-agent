@@ -7,7 +7,7 @@ This report evaluates candidate AI models for Sprint 2 using benchmark evidence,
 ### Benchmark Interpretation
 
 | Benchmark | Purpose | Use in Decision |
-|---|---|---|
+| :--- | :--- | :--- |
 | SWE-bench Verified | Measures software engineering issue resolution | Strong signal for coding agents |
 | SWE-bench Pro | Evaluates harder engineering tasks | Production robustness check |
 | HumanEval / LiveCodeBench | Measures coding and reasoning performance | Supplemental coding benchmark |
@@ -45,6 +45,10 @@ GPT-5.4 demonstrated strong reasoning quality and specification-review capabilit
 ### Gemini 3.1 Pro
 
 Gemini 3.1 Pro demonstrated the fastest response times and consistently structured outputs. It performed well in concise summarization and risk analysis tasks. However, it demonstrated less autonomous tool-use and verification behavior compared to Claude Sonnet 4.6.
+
+### Claude Opus 4.6 — Note
+
+Claude Opus 4.6 was provisionally selected for drug interaction analysis in the Week 3 model strategy based on its highest reasoning capability among Anthropic models (SWE-bench Verified 80.8%, Rank 2 — AI410 Spring 2026 Syllabus Appendix). However, direct empirical benchmarking was not conducted during Week 4 due to VS Code Copilot plan limitations that do not include access to Claude Opus 4.6 during the benchmarking session. Based on provider documentation, Opus 4.6 is expected to provide higher reasoning quality at the cost of increased latency and cost compared to Sonnet 4.6. This comparison remains an open item for future sprint validation.
 
 ## Conclusion
 
