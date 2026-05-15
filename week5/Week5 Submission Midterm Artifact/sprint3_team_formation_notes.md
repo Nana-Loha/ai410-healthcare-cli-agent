@@ -20,8 +20,7 @@
 
 Our project is a stateful, LangGraph-orchestrated Healthcare AI web application that
 assists clinical staff with SOAP-structured medical note summarization, ICD-10 code
-suggestion via RAG, symptom checking, and drug interaction analysis — powered by a
-user-selected AI provider (Claude, GPT-4, or Gemini). Sprint 3 elevates the existing
+suggestion via RAG, symptom checking, and drug interaction analysis — powered by task-based AI provider routing (Claude Sonnet 4.6 for general tasks, Claude Opus 4.6 for safety-critical decisions, Gemini 3.1 Pro for retrieval, GPT-5.4 as fallback). Sprint 3 elevates the existing
 agent into a ReAct-loop workflow with explicit node transitions, self-correction on
 tool failures, and human-in-the-loop checkpoints at high-impact medical decision
 boundaries (e.g., severe drug interaction confirmation, emergency symptom detection).
@@ -61,9 +60,10 @@ All prior artifacts from Weeks 1–4 and the Clinical SOAP Summarization with IC
 - Chat interface — conversational input for symptom queries
 
 ### AI Provider APIs
-- Anthropic Claude (`ANTHROPIC_API_KEY`)
-- OpenAI GPT-4 (`OPENAI_API_KEY`)
-- Google Gemini (`GOOGLE_API_KEY`)
+- Anthropic Claude Sonnet 4.6 (`ANTHROPIC_API_KEY`) — symptom checking, SOAP summarization
+- Anthropic Claude Opus 4.6 (`ANTHROPIC_API_KEY`) — drug interaction (safety-critical reasoning)
+- Google Gemini 3.1 Pro (`GOOGLE_API_KEY`) — ICD-10 RAG retrieval
+- OpenAI GPT-5.4 (`OPENAI_API_KEY`) — provider fallback (FR-002, FR-012)
 
 ### MCP Integrations (Week 2 setup)
 - MCP Filesystem Server — read/write local files for record input and session logs
