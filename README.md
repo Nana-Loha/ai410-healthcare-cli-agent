@@ -1,6 +1,6 @@
-# AI410 — Healthcare CLI Agent
+# AI410 — Healthcare AI Agent: Sprint 3
 
-A CLI-based AI agent for healthcare queries: symptom checking, medical record summarization, and drug interaction checking — powered by your choice of Claude, GPT-4, or Gemini.
+A LangGraph-powered stateful agent for healthcare tasks: SOAP note generation, drug interaction checking, and symptom analysis — with human-in-the-loop safety checkpoints and a Streamlit web deployment path.
 
 > **Medical Disclaimer**: This tool is not a substitute for professional medical advice, diagnosis, or treatment. Always consult a qualified healthcare provider.
 
@@ -8,24 +8,63 @@ A CLI-based AI agent for healthcare queries: symptom checking, medical record su
 
 ## Features
 
-- **Symptom checking** — analyse free-form symptoms, detect emergencies, ask one clarifying question when input is ambiguous
-- **Medical record summarization** — produce a structured summary (diagnoses, medications, allergies, follow-ups) from inline text or a file
-- **Drug interaction checking** — report severity levels and precautions for any combination of drugs, with a confirmation gate for severe interactions
-- **Multi-provider AI support** — switch between Claude, GPT-4, and Gemini per command or set a persistent default
+- **SOAP summarization** — generate structured Subjective / Objective / Assessment / Plan notes from free-form clinical text, with ICD-10 code suggestions requiring clinician approval
+- **Drug interaction checking** — report severity levels and precautions for any drug combination; severe interactions route to a human checkpoint (powered by Claude Opus 4.6 for safety-critical reasoning)
+- **Symptom analysis** — analyse free-form symptoms, detect emergencies, surface risk level and recommended next steps
+- **Human-in-the-loop (HITL) checkpoints** — high-risk results and ICD-10 codes pause execution for human approval before output is shown
+- **Self-correcting retry loop** — evaluator node retries failed tool calls up to 3 times before escalating
+- **State persistence** — patient allergies, medications, and conditions carry across conversation turns
+
+---
+
+## Architecture
+
+The agent is a four-node [LangGraph](https://github.com/langchain-ai/langgraph) `StateGraph`. Every turn flows through the same pipeline; conditional edges handle retry and HITL branching.
+
+```
+planner → tool → evaluator ──(error + retries < 3)──→ tool   (retry loop)
+                           ├──(needs_human = true)───→ hitl → END
+                           └──(ok)────────────────────────────→ END
+```
+
+| Node | File | Responsibility |
+|---|---|---|
+| **planner** | `nodes.py` | Detect intent: `soap`, `drug_check`, or `symptom` |
+| **tool** | `nodes.py` | Call the appropriate Claude-backed tool |
+| **evaluator** | `nodes.py` | Check output quality; trigger retry or HITL |
+| **hitl** | `nodes.py` | Pause for human approval (CLI: `input()`; Streamlit: `st.button()`) |
+
+### Shared state (`state.py`)
+
+`AgentState` is a `TypedDict` passed between all nodes — think of it as the patient chart for the session:
+
+| Field | Type | Description |
+|---|---|---|
+| `user_input` | `str` | Raw user message |
+| `task_type` | `str` | `"soap"` / `"drug_check"` / `"symptom"` |
+| `soap_summary` | `str` | Formatted SOAP note |
+| `icd10_codes` | `list` | ICD-10 suggestions pending clinician approval |
+| `risk_level` | `str` | `"low"` / `"medium"` / `"high"` |
+| `needs_human` | `bool` | Triggers HITL node when `True` |
+| `human_approved` | `bool` | Set by HITL node after approval |
+| `retry_count` | `int` | Incremented on each tool retry |
+| `allergies` / `current_medications` / `conditions` | `list` | Persisted across turns |
+
+### Tools (`tools.py`)
+
+| Tool | Model | Purpose |
+|---|---|---|
+| `check_symptoms` | `claude-sonnet-4-6` | Symptom analysis + emergency detection |
+| `check_drug_interaction` | `claude-opus-4-6` | Drug interaction severity + precautions |
+| `generate_soap_summary` | `claude-sonnet-4-6` | SOAP note + ICD-10 suggestions |
 
 ---
 
 ## Prerequisites
 
-- Python 3.12+
-- [`uv`](https://github.com/astral-sh/uv) package manager
-- At least one provider API key (set as an environment variable):
-
-| Provider | Environment Variable |
-|---|---|
-| Anthropic Claude | `ANTHROPIC_API_KEY` |
-| OpenAI GPT-4 | `OPENAI_API_KEY` |
-| Google Gemini | `GOOGLE_API_KEY` |
+- Python 3.13+
+- [`uv`](https://docs.astral.sh/uv/) package manager
+- Anthropic API key (required — all tools use Claude)
 
 ---
 
@@ -38,209 +77,110 @@ cd ai410
 
 # Install dependencies
 uv sync
-
-# (Optional) Install as a runnable command
-uv pip install -e .
 ```
 
 ---
 
 ## Configuration
 
-Set your default AI provider once:
+Set your Anthropic API key before running:
 
 ```bash
-agent config --set-provider claude
+# macOS / Linux
+export ANTHROPIC_API_KEY=sk-ant-...
+
+# Windows PowerShell
+$env:ANTHROPIC_API_KEY = "sk-ant-..."
+
+# Windows CMD
+set ANTHROPIC_API_KEY=sk-ant-...
 ```
 
-Valid provider names: `claude`, `openai`, `gemini`.
-
-Provider configuration is stored at `~/.config/healthcare-agent/config.toml` and contains only the provider name — **API keys are never written to the config file**. Keys are read exclusively from environment variables at runtime.
-
-```bash
-# View current configuration
-agent config --show
-```
+API keys are read from environment variables at runtime and are never written to disk.
 
 ---
 
 ## Usage
 
-All commands follow the pattern `agent <subcommand> [options]`.
-
-### Global options
-
-| Flag | Description |
-|---|---|
-| `--provider TEXT` | Override the active provider for this command |
-| `--help` | Show help and exit |
-| `--version` | Print version and exit |
-
----
-
-### `symptoms` — Check symptoms
-
-Analyse one or more symptoms and receive possible conditions, likelihoods, recommended next steps, and cited sources. Life-threatening symptoms surface an emergency prompt before all other output.
+### CLI mode
 
 ```bash
-agent symptoms [OPTIONS]
+uv run python week6/healthcare_agent/main.py
 ```
 
-| Flag | Type | Required | Description |
-|---|---|---|---|
-| `--input TEXT` | string | Yes (or stdin) | Free-form symptom description |
-| `--provider TEXT` | string | No | Override active provider |
+The agent opens an interactive chat loop. Type `quit` or `exit` to stop.
 
-**Example**:
-
-```bash
-agent symptoms --input "severe chest pain, shortness of breath"
-```
+**Example interactions:**
 
 ```text
-⚠️  EMERGENCY: These symptoms may indicate a life-threatening condition.
-    Call emergency services (911) immediately.
-    ─────────────────────────────────────────────────────
+You: I have chest pain and shortness of breath
 
-Possible conditions:
-  • Acute myocardial infarction (High likelihood)
-    Immediate medical attention required.
+You: Patient note: 45yo male with hypertension, presents with fatigue and dizziness
 
-Next steps:
-  1. Call 911 immediately.
-  2. Chew aspirin if not allergic and no contraindications.
-
-Sources: Based on Claude AI provider knowledge.
-
-⚕️  This information is not a substitute for professional medical advice,
-    diagnosis, or treatment.
+You: I'm taking warfarin and aspirin, are there interactions?
 ```
 
----
-
-### `summarize` — Summarize a medical record
-
-Produce a structured summary of a plain-text medical record provided inline or via a file path. Long records are chunked and merged automatically. No content is written to disk or logs.
-
-```bash
-agent summarize [OPTIONS]
-```
-
-| Flag | Type | Required | Description |
-|---|---|---|---|
-| `--file PATH` | path | Yes (or `--input`) | Path to a plain-text medical record file |
-| `--input TEXT` | string | Yes (or `--file`) | Inline record text |
-| `--provider TEXT` | string | No | Override active provider |
-
-**Example**:
-
-```bash
-agent summarize --file discharge_summary.txt
-```
+**SOAP example:**
 
 ```text
-Medical Record Summary
-──────────────────────
-Diagnoses:
-  • Type 2 Diabetes Mellitus
-  • Hypertension
+You: Patient note: 45yo male with hypertension, presents with fatigue and dizziness
 
-Medications:
-  • Metformin 500mg twice daily
-  • Lisinopril 10mg once daily
+🧠 [Planner Node] Analyzing user intent...
+   → Task detected: soap
 
-Allergies:
-  • Penicillin (rash)
+🔧 [Tool Node] Calling external tool...
 
-Follow-up Recommendations:
-  1. HbA1c check in 3 months.
-  2. Blood pressure monitoring weekly.
+SOAP Summary
+────────────
+S (Subjective): 45-year-old male reports fatigue and dizziness
+O (Objective):  Hypertension noted; vital signs pending
+A (Assessment): Possible hypertensive episode; rule out orthostatic hypotension
+P (Plan):       Monitor BP, review medications, follow up in 1 week
 
-⚕️  This information is not a substitute for professional medical advice,
-    diagnosis, or treatment.
+🚨 [HITL Node] Human approval required!
+   ICD-10 codes suggested:
+   • I10 — Essential hypertension
+   • R53.83 — Fatigue
+   • R42 — Dizziness
+
+⚕️  Clinician: Approve these ICD-10 codes? [y/N]:
 ```
 
----
-
-### `interactions` — Check drug interactions
-
-Report known interactions, severity levels, and precautions for two or more drugs. A confirmation prompt is shown before displaying severe interactions.
-
-```bash
-agent interactions [OPTIONS]
-```
-
-| Flag | Type | Required | Description |
-|---|---|---|---|
-| `--drugs TEXT` | comma-separated string | Yes | Drug names to check (minimum 2) |
-| `--provider TEXT` | string | No | Override active provider |
-
-**Example**:
-
-```bash
-agent interactions --drugs "warfarin, aspirin"
-```
+**Drug interaction example:**
 
 ```text
-⚠️  SEVERE interaction detected. Do you want to proceed? [y/N]: y
+You: I'm taking warfarin and aspirin
 
 Drug Interaction Report
 ───────────────────────
-warfarin ↔ aspirin
-  Severity: SEVERE
-  Description: Combined use significantly increases bleeding risk.
-  Precautions:
-    • Avoid concurrent use unless directed by a physician.
-    • Monitor INR closely if combination is necessary.
-  Sources: Based on Claude AI provider knowledge.
-
-⚕️  This information is not a substitute for professional medical advice,
-    diagnosis, or treatment.
+Drugs checked: warfarin, aspirin
+Severity: SEVERE
+Interactions: Combined use significantly increases bleeding risk
+Precautions: Avoid concurrent use unless directed by a physician; monitor INR closely
 ```
 
 ---
 
-### `config` — Manage configuration
+## Streamlit Deployment
 
-View or update the agent's provider configuration. No patient data is involved.
+The HITL node currently uses `input()` for CLI operation. To deploy as a Streamlit web application, replace the `input()` calls in `hitl_node` (`nodes.py:225–229`) with Streamlit components:
 
-```bash
-agent config [OPTIONS]
+```python
+# CLI (current)
+approval = input("⚕️  Clinician: Approve these ICD-10 codes? [y/N]: ").strip().lower()
+
+# Streamlit (migration target)
+approval = "y" if st.button("Approve ICD-10 codes") else "n"
+st.session_state["human_approved"] = (approval == "y")
 ```
 
-| Flag | Type | Required | Description |
-|---|---|---|---|
-| `--set-provider TEXT` | string | No | Set the default AI provider |
-| `--show` | flag | No | Print current configuration |
-
-**Example**:
-
-```bash
-agent config --set-provider gemini
-# Default provider set to: gemini
-
-agent config --show
-# Default provider: gemini
-# Config file: ~/.config/healthcare-agent/config.toml
-```
-
----
-
-## Exit Codes
-
-| Code | Meaning |
-|---|---|
-| 0 | Command completed successfully |
-| 1 | Invalid or missing input (empty symptoms, fewer than 2 drugs, missing `--file`/`--input`, invalid provider name) |
-| 2 | Provider error (API unavailable, missing or invalid API key, file not found) |
-| 3 | User aborted a confirmation prompt |
-| 4 | Both `--file` and `--input` provided to `summarize` (mutually exclusive) |
+All other nodes are stateless functions — they work without modification in a Streamlit session.
 
 ---
 
 ## Development
 
-### Install dependencies
+### Install dev dependencies
 
 ```bash
 uv sync
@@ -254,13 +194,17 @@ uv run pytest
 
 ### Project layout
 
-
 ```
-main.py              # CLI entry point (symptoms, summarize, interactions, config)
-pyproject.toml       # Project config and dependencies
-specs/               # Spec Kit artifacts (spec, plan, tasks, data-model)
-.claude/             # Claude Code skills and hooks
+week6/healthcare_agent/
+├── state.py      # AgentState TypedDict (shared patient chart)
+├── tools.py      # check_symptoms, check_drug_interaction, generate_soap_summary
+├── nodes.py      # planner_node, tool_node, evaluator_node, hitl_node
+├── graph.py      # LangGraph StateGraph with conditional routing
+└── main.py       # CLI chat loop entry point
 
+pyproject.toml    # Project config and dependencies (Python 3.13+)
+specs/            # Spec Kit artifacts
+tests/            # pytest test suite
 ```
 
 ### Contribution guidelines
