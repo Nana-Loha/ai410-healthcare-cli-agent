@@ -69,8 +69,8 @@ After the evaluator node, routing is decided by `route_after_evaluator`:
 
 HITL checkpoints are triggered at three boundaries:
 
-1. **Emergency symptom detection** — agent pauses before displaying life-threatening condition warnings.
-2. **Severe drug interaction** — agent pauses before displaying HIGH-severity interaction reports.
+1. **Emergency symptom detection** — HITL requires confirmation before returning the emergency result as the final agent response.
+2. **Severe drug interaction** — HITL requires confirmation before returning the HIGH-severity interaction report as the final agent response.
 3. **All-provider failure** — agent pauses when all retry attempts are exhausted.
 
 HITL is not triggered on every output to avoid **Click Fatigue** — users ignoring prompts without reading them. Checkpoints are reserved exclusively for genuine high-risk boundaries where clinician review is medically necessary.
@@ -110,7 +110,7 @@ The self-correction loop is implemented in `evaluator_node`. When a tool call fa
 
 Input: `"I have severe chest pain and shortness of breath"`
 
-The planner routes to symptom check. The tool returns `risk_level=high` and `emergency=true`. The evaluator passes output to the HITL node, which pauses and requests clinician confirmation before displaying the emergency warning.
+The planner routes to symptom check. The tool returns `risk_level=high` and `emergency=true`. The evaluator passes output to the HITL node, which requires clinician confirmation before returning the emergency result as the final agent response.
 
 ### Figure 3 — Symptom check triggering HITL (emergency detected)
 
@@ -130,7 +130,7 @@ The planner routes to symptom check. The tool returns `risk_level=high` and `eme
 
 Input: `"I'm taking warfarin and aspirin"`
 
-The planner routes to `drug_check`. Claude Opus 4.6 returns `severity=severe` and `needs_human=True`. The HITL node pauses and requires clinician confirmation before displaying the severe interaction report.
+The planner routes to `drug_check`. Claude Opus 4.6 returns `severity=severe` and `needs_human=True`. The HITL node requires clinician confirmation before returning the severe interaction report as the final agent response.
 
 ### Figure 5 — Drug interaction check triggering HITL (severity: SEVERE)
 
