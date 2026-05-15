@@ -150,7 +150,7 @@ Recommendation: {result.get('recommendation', 'Consult a healthcare provider')}
             }
 
     except Exception as e:
-        print(f"   → ❌ Tool error: {e}")
+        print(f"   → ❌ Unable to reach AI provider. Retrying...")
         return {
             **state,
             "last_error": str(e),
@@ -175,14 +175,14 @@ def evaluator_node(state: AgentState) -> AgentState:
         max_retries = state.get("max_retries", 3)
 
         if retry_count < max_retries:
-            print(f"   → Retry {retry_count}/{max_retries}: {state['last_error']}")
+            print(f"   → Retry {retry_count}/{max_retries}: Unable to reach AI provider")
             return {**state, "needs_human": False}
         else:
             print("   → Max retries reached. Escalating to human.")
             return {
                 **state,
                 "needs_human": True,
-                "final_response": f"⚠️ System error after {max_retries} retries. Please consult a healthcare provider directly.\nError: {state['last_error']}"
+                "final_response": f"⚠️ Unable to complete request after {max_retries} attempts. Please consult a healthcare provider directly."
             }
 
     # Check output quality
@@ -209,7 +209,7 @@ def hitl_node(state: AgentState) -> AgentState:
     """
     Pauses execution and waits for human approval.
     NOTE: input() is used for CLI mode.
-    When integrating with Streamlit, replace input() 
+    When integrating with Streamlit, replace input()
     with st.button() and st.session_state for approval flow.
     """
     print("\n🚨 [HITL Node] Human approval required!")
@@ -241,4 +241,3 @@ def hitl_node(state: AgentState) -> AgentState:
             "human_approved": False,
             "final_response": "⚕️  Output was not approved. Please consult a healthcare provider directly."
         }
-    
