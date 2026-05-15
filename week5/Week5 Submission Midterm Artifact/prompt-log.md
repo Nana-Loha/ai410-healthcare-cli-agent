@@ -1,49 +1,131 @@
 # Prompt Log — AlphaDemocrat: Week 5 Midterm
 **Project**: Retail Stock Directionality System (1-5 day horizon, S&P 500)
+**Author:** Pitch Lohavanichbutr
+**Date:** May 2026
 **Process**: Spec-driven development using AI-assisted research and planning
+
+**Transparency Statement**: This log documents the actual prompts I used at each step. I used LLMs as a learning tool to build domain knowledge in quantitative finance — a field I am familiar with as a news follower and retail investor, but not as a quant researcher. All key decisions were made by me after reviewing and critically evaluating the AI outputs.
 
 ---
 
-## Step 1 — Initial Research Prompt
+## Step 1 — Initial Research Prompt (Gemini Deep Research)
 
+**Tool**: Gemini Deep Research
 **Goal**: Generate academic and industry foundation for hybrid stock prediction system
 
-**Prompt used**:
-```
-As a fintech researcher, I want to build an AI application that predicts
-short-term stock price movement direction (up/down) within 1-5 days
-for retail investors — making institutional-grade analysis accessible
-to everyone.
+**Prompt Design Note:**
+The original prompt mixed domain knowledge directly inside the prompt body — making it long and token-heavy. A better practice (learned during this process) is to separate domain knowledge into a standalone file (`DOMAIN.md`) and reference it in a shorter, cleaner prompt. The revised approach is shown below.
 
-Domain Knowledge I have:
-- Stock markets are driven by both price patterns AND news sentiment
-- Hybrid models combining OHLCV + NLP sentiment outperform price-only
-  models in short-term prediction
-- Retail investors lack access to institutional-grade quantitative tools
+---
+
+### 1.1 Original Prompt (as used — domain knowledge embedded)
+
+```
+As a fintech researcher, I want to explore whether it is possible to build
+an AI application that predicts short-term stock price movement direction
+(up/down) within 1–5 trading days for retail investors.
+
+The goal is not to guarantee profits or automate trading. The goal is to
+make institutional-style quantitative analysis more accessible to retail
+investors who normally do not have access to advanced market analytics tools.
+
+Domain Knowledge:
+- Stock prices are influenced by both historical price behavior and market sentiment.
+- Financial news and investor psychology can rapidly affect short-term price movement.
+- Hybrid models combining OHLCV data with NLP-based financial sentiment analysis
+  often outperform price-only models in short-term prediction tasks.
+- Retail investors are disadvantaged compared to institutions because they lack
+  access to quantitative infrastructure, research teams, and real-time analysis systems.
+- Market regimes change over time, so models that work in one period may fail
+  during volatile or unexpected market conditions.
+- News coverage itself may introduce bias because large-cap companies receive
+  significantly more media attention than smaller companies.
+- Financial prediction systems are highly sensitive to look-ahead bias and data
+  leakage, especially when using news timestamps.
+- In finance, directional accuracy above 55% on out-of-sample data can already
+  be meaningful if combined with proper risk management and
+  transaction-cost-aware strategies.
 
 Technical Requirements:
-- Input: OHLCV price data + News headlines (NLP sentiment)
+- Input data: OHLCV stock data + Financial news headlines + Financial sentiment scores
 - Target universe: S&P 500 constituents
-- Hardware: Consumer GPU, 8-24GB VRAM (RTX 3060–4090 range)
-- Latency: all 500 predictions cached within 60 seconds of
-  pre-market data availability
-- Accuracy target: >55% directional accuracy
+- Prediction horizon: 1-day, 3-day, 5-day movement direction
+- Hardware constraints: Consumer GPU only, RTX 3060–4090, 8–24GB VRAM maximum
+- Performance: All 500 predictions cached within 60 seconds after pre-market data
+- Accuracy target: >55% directional accuracy on out-of-sample testing
 
-Please research and provide (in priority order):
-1. Academic literature on hybrid stock prediction models
-2. Best lightweight NLP models for financial sentiment on consumer hardware
-3. Key benchmarks and accuracy metrics used in industry
-4. Responsible AI concerns (bias, fairness, transparency, regulatory risk)
-5. Recommended architecture and tech stack
-6. Synthesize everything into:
-   - spec.md, tasks.md
-   - Model selection rationale
-   - Responsible AI implementation framework
-   - Prompt log excerpt for alpha formula generation
+Architecture Considerations:
+- Compare lightweight transformer-based financial sentiment models vs larger LLMs
+- Investigate FinBERT, DistilFinBERT, DistilRoBERTa for consumer hardware deployment
+- Compare LightGBM/XGBoost vs LSTM, BiLSTM, GRU, lightweight Transformers
+- Evaluate hybrid architectures combining sentiment embeddings + technical indicators
+- Consider caching strategy and batch inference pipeline for all S&P 500
 
-Format: use section headers, comparison tables for model/tool
-selection, and code snippets where relevant
+Benchmark and Evaluation Requirements:
+- directional accuracy, precision, recall, F1-score, ROC-AUC
+- Sharpe ratio, max drawdown, annualized return
+- Include transaction costs and realistic backtesting methodology
+- Compare against random baseline and buy-and-hold baseline
+
+Responsible AI and Regulatory Considerations:
+- Retail investors may incorrectly interpret predictions as guaranteed financial advice
+- Bias from unequal media coverage across sectors and market capitalizations
+- Include explainability: confidence scores and feature importance
+- Investigate SEC and FINRA concerns around AI-generated investment guidance
+- Transparency and uncertainty communication are critical
+
+Use deep research and synthesize findings into:
+1. Academic literature review on hybrid stock prediction systems
+2. Recommended lightweight NLP sentiment models for finance
+3. Recommended forecasting architectures
+4. Benchmark comparison and evaluation criteria
+5. Responsible AI risks and mitigations
+6. Recommended production architecture and technology stack
+
+Then generate: SPEC.md, TASKS.md, model selection rationale, responsible_ai_framework.md
+
+Preferences:
+- Prefer academic and industry sources over blogs
+- Clearly identify trade-offs between accuracy, latency, and hardware requirements
+- Distinguish between experimental research performance and realistic deployable systems
+- Include discussion of limitations and failure cases
 ```
+
+---
+
+### 1.2 Improved Prompt (domain knowledge separated into DOMAIN.md)
+
+**What I learned**: Embedding all domain knowledge inside the prompt wastes tokens and makes the prompt harder to maintain. Better practice: write domain knowledge once in `DOMAIN.md`, then reference it in a shorter prompt.
+
+```
+See DOMAIN.md for full domain knowledge context.
+
+As a fintech researcher, using the domain knowledge in DOMAIN.md,
+please research and synthesize:
+
+1. Academic literature on hybrid stock prediction models (OHLCV + NLP sentiment)
+2. Best lightweight NLP models for financial sentiment on consumer GPU (8-24GB VRAM)
+3. Forecasting architectures: compare LightGBM/XGBoost vs LSTM/BiLSTM/GRU
+4. Key benchmarks: directional accuracy, F1, Sharpe ratio, max drawdown
+5. Responsible AI risks: hallucination, bias, SEC/FINRA compliance, herding risk
+6. Recommended production architecture and tech stack
+
+Target: S&P 500, 1-5 day horizon, >55% accuracy, 60s SLA for 500 symbols
+
+Output: SPEC.md, TASKS.md, model selection rationale, responsible_ai_framework.md
+
+Preferences:
+- Academic and industry sources over blogs
+- Distinguish experimental vs deployable performance
+- Include limitations and failure cases
+```
+
+**Token comparison:**
+- Original prompt: ~450 tokens
+- Improved prompt (with DOMAIN.md separate): ~120 tokens
+- Saving: ~330 tokens per call — significant for multi-turn research sessions
+
+---
 
 **Output received**: Research report covering EMH debate, model comparisons,
 NLP benchmarks, tech stack recommendations, and initial spec/tasks synthesis.
@@ -51,13 +133,18 @@ NLP benchmarks, tech stack recommendations, and initial spec/tasks synthesis.
 **Key finding**: DistilRoBERTa + BiLSTM selected as primary architecture.
 Initial α_SAM formula proposed.
 
+**My decision**: Accepted the architecture direction. Noted that the initial
+α_SAM formula needed review — flagged for Step 3.
+
 ---
 
-## Step 2 — Research Website Prompt (Deep Dive)
+## Step 2 — Deep Dive Research (Gemini Deep Research)
 
+**Tool**: Gemini Deep Research
 **Goal**: Validate architecture decisions with specific benchmarks
+**How this prompt was created**: Gemini auto-generated this 7-question research plan from my Step 1 prompt and asked "What changes do you want to make?". I then brought this plan to Claude to review. Claude suggested adding: DistilRoBERTa to question 2, Bidirectional LSTM to question 3, herding risk to question 7, and X/Twitter API as a new question 8. I approved all suggestions and confirmed the revised plan back to Gemini to proceed with deep research.
 
-**Prompt used**:
+**Actual prompt used**:
 ```
 Research Websites
 
@@ -94,29 +181,25 @@ ingestion, including cost, rate limits, and bot-filtering strategies
 for financial signal extraction.
 ```
 
-**Output received**: Benchmark tables, model comparison data, regulatory
-framework summary, X/Twitter API options.
-
-**Key decisions confirmed**:
+**Key decisions confirmed from output**:
 - DistilRoBERTa: 87.3% accuracy, 20ms/batch, 42M parameters
 - BiLSTM: F1=0.55, 28ms inference for 500 symbols
 - X/Twitter added as secondary sentiment source with bot filtering
 
+**My decision**: Confirmed DistilRoBERTa + BiLSTM. Added X/Twitter as
+secondary source — my own call based on knowing that social media moves
+markets (e.g. Elon Musk tweets on DOGE).
+
 ---
 
-## Step 3 — Formula Design and Revision
+## Step 3 — Formula Design and Revision (Claude Sonnet 4.6)
 
-**Goal**: Design and validate the core α_SAM alpha factor
+**Tool**: Claude Sonnet 4.6
+**Goal**: Review and fix the α_SAM formula from Step 1 research output
 
-### 3.1 Initial Formula Proposed by Research Output
+### 3.1 Formula Review Prompt
 
-```
-α_SAM = ((C_t - SMA20) / SMA20) × log(1 + |S_t|)
-```
-
-### 3.2 Formula Review — Issues Identified
-
-**Prompt used**:
+**Actual prompt used**:
 ```
 Check this formula:
 α_SAM = ((C_t - SMA20) / SMA20) × log(1 + |S_t|)
@@ -124,17 +207,22 @@ Where C_t is current closing price and S_t is normalized
 sentiment score from DistilRoBERTa.
 ```
 
-**Issues found**:
+**Issues Claude identified**:
 
 | Issue | Problem | Impact |
-|---|---|---|
-| `\|S_t\|` absolute value | Loses sentiment direction | Negative sentiment generates positive signal |
+|-------|---------|--------|
+| `|S_t|` absolute value | Loses sentiment direction | Negative sentiment generates positive signal |
 | No time decay | Old news weighted equally as today's | Stale sentiment inflates signal |
 | No volume confirmation | Momentum without volume = false signal | High false positive rate |
 
-### 3.3 Revised Formula (Final)
+**What I learned**: I did not realize that `|S_t|` removes the negative sign
+— meaning bad news would produce the same signal direction as good news.
+This is a critical flaw for a trading system. Claude explaining this helped
+me understand why sign preservation matters in financial formulas.
 
-**Prompt used**:
+### 3.2 Formula Revision Prompt
+
+**Actual prompt used**:
 ```
 Revise α_SAM to fix:
 1. Add sign(S_t) to preserve sentiment direction
@@ -142,36 +230,46 @@ Revise α_SAM to fix:
 3. Add volume confirmation gate V_t/SMA_Vol20
 ```
 
-**Step 1 — Time decay for sentiment**:
-$$S_t = \sum_{i=0}^{n} \lambda^i \cdot s_{t-i}, \quad \lambda \in [0.7, 0.9]$$
+**Step 1 — Time decay for sentiment recency**:
+```
+S_t = Σ(i=0 to n) λⁱ · s_{t-i},  λ ∈ [0.7, 0.9]
+```
 
-**Step 2 — Final α_SAM with all corrections**:
-$$\alpha_{SAM} = \left(\frac{C_t - \text{SMA}_{20}}{\text{SMA}_{20}}\right) \times \log(1 + |S_t|) \times \text{sign}(S_t) \times \frac{V_t}{\text{SMA\_Vol}_{20}}$$
+**Step 2 — Final α_SAM (revised)**:
+```
+α_SAM = ((C_t - SMA20) / SMA20) × log(1 + |S_t|) × sign(S_t) × (V_t / SMA_Vol20)
+```
 
 **Component breakdown**:
 
 | Component | Role |
-|---|---|
-| $(C_t - SMA_{20})/SMA_{20}$ | Price momentum |
-| $\log(1+\|S_t\|)$ | Sentiment magnitude (damped) |
-| $\text{sign}(S_t)$ | Sentiment direction (critical fix) |
-| $V_t/\text{SMA\_Vol}_{20}$ | Volume confirmation gate |
+|-----------|------|
+| `(C_t - SMA20) / SMA20` | Price momentum |
+| `log(1 + \|S_t\|)` | Sentiment magnitude (log-damped) |
+| `sign(S_t)` | Sentiment direction — critical fix |
+| `V_t / SMA_Vol20` | Volume confirmation gate |
 
-**Volume gate rule**: If $V_t / \text{SMA\_Vol}_{20} < 1.1$, then $\alpha_{SAM} = 0.0$
+**Volume gate rule**: If `V_t / SMA_Vol20 < 1.1` → `α_SAM = 0.0`
+(no signal without above-average volume)
+
+**My decision**: Accepted all 3 fixes. The volume gate threshold of 1.1
+was my own choice — I know from experience that low-volume price moves
+are often not reliable signals.
 
 ---
 
-## Step 4 — Alpha Exhaustion Formula (AI-Assisted Discovery)
+## Step 4 — Alpha Exhaustion Formula (Claude Sonnet 4.6)
 
-**Goal**: Discover additional alpha factor for price exhaustion detection
+**Tool**: Claude Sonnet 4.6
+**Goal**: Add a second alpha factor for detecting price exhaustion / reversal
 
-**Prompt used**:
+**Actual prompt used**:
 ```
 Generate a formulaic alpha that identifies price exhaustion.
 Use RSI, Volume, and News Sentiment.
 ```
 
-**AI Reasoning**:
+**Claude's reasoning**:
 > "Price exhaustion typically happens when a trend continues on declining
 > volume. If RSI is over 70 and volume is decreasing, but news sentiment
 > is still overly positive, it might indicate a 'hype bubble' ready to pop."
@@ -181,49 +279,49 @@ Use RSI, Volume, and News Sentiment.
 Alpha_Exhaustion = rank(RSI(14)) × rank(-delta(Volume, 5)) × rank(Sentiment_t)
 ```
 
-**Interpretation**: When RSI is high (overbought), volume is falling
-(declining momentum), and sentiment remains positive (hype), the
-cross-product creates a strong reversal signal — identifying stocks
-where price continuation is unlikely.
+**My interpretation**: When RSI is high (overbought), volume is falling
+(declining momentum), and sentiment is still positive (hype), the
+cross-product creates a reversal signal. I know this pattern from watching
+stocks like NVDA run up on hype then crash when volume dried up.
+
+**My decision**: Added this as a secondary alpha factor alongside α_SAM.
 
 ---
 
-## Step 5 — X/Twitter Integration Decision
+## Step 5 — X/Twitter Source Evaluation (Claude Sonnet 4.6)
 
-**Goal**: Evaluate adding social sentiment as secondary input source
+**Tool**: Claude Sonnet 4.6
+**Goal**: Evaluate whether social media is safe to add as input
 
-**Prompt used**:
+**Actual prompt used**:
 ```
 Check with X (Twitter), sensitive news in social media — is it ok
 to add as input source?
 ```
 
-**Decision**: Add X/Twitter as **secondary source** with explicit constraints:
+**Decision reached**: Add X/Twitter as secondary source with constraints:
 
 ```
-- Input priority: Financial news headlines > X/Twitter posts
-- Reason: X has significantly higher noise ratio
-- Bot filtering: 5-point heuristic score required
+- Priority: Financial news headlines (primary) > X/Twitter (secondary)
+- Bot filtering: 5-point heuristic score
   (new account, high velocity, weak follower ratio,
    duplicate burst, spam link)
-- Threshold: bot_score >= 2.0 → exclude from sentiment
-- API: X Basic tier ($100/month), rate limited
+- Threshold: bot_score >= 2.0 → exclude
+- API cost: X Basic tier ($100/month)
+- Sentiment weight: 60% news / 40% social
 ```
 
-**Updated input spec**:
-```
-Input: OHLCV + Financial news headlines (primary)
-       + X/Twitter cashtag sentiment (secondary, bot-filtered)
-Sentiment weight: news > social (60/40 split)
-```
+**My decision**: The 60/40 weighting split was my own — I decided news
+should dominate because X has too much noise and manipulation risk.
 
 ---
 
-## Step 6 — Spec Generation
+## Step 6 — Spec Generation (GitHub SpecKit in VS Code)
 
-**Goal**: Convert research into formal specification
+**Tool**: GitHub Copilot `/speckit-specify` in VS Code
+**Goal**: Convert all research into formal SPEC.md
 
-**Prompt used**:
+**Actual prompt used**:
 ```
 /speckit-specify
 
@@ -238,29 +336,32 @@ Target universe: S&P 500 constituents
 Hardware: RTX 3060-4090 (8-24GB VRAM)
 ```
 
-**Output**: spec.md with 6 sections:
+**Output**: SPEC.md with sections:
 - FR-1: Social Ingestion and Filtering
 - FR-2: Deterministic Bot Heuristics
 - FR-3: alpha_SAM Feature (revised formula)
 - FR-4: Sentiment Model Pinning
 - FR-5: Serving SLA Gate
-- Acceptance criteria and code traceability
+
+**Note**: SpecKit produced more detailed and structured output than
+Gemini or Claude alone — this confirmed the value of spec-driven tooling.
 
 ---
 
-## Step 7 — Task Planning
+## Step 7 — Task Planning (GitHub SpecKit in VS Code)
 
-**Goal**: Break spec into executable implementation tasks
+**Tool**: GitHub Copilot `/speckit-tasks` in VS Code
+**Goal**: Break SPEC.md into executable implementation tasks
 
-**Prompt used**:
+**Actual prompt used**:
 ```
 /speckit-tasks
 ```
 
-**Output**: tasks.md with 20 tasks across 6 phases:
+**Output**: TASKS.md with 20 tasks across 6 phases:
 
 | Phase | Tasks | Focus |
-|---|---|---|
+|-------|-------|-------|
 | A | T1-T6 | Data infrastructure, schemas, adapters |
 | B | T7-T9 | Feature engineering, alpha_SAM |
 | C | T10-T11 | Sentiment inference, model pinning |
@@ -268,63 +369,40 @@ Hardware: RTX 3060-4090 (8-24GB VRAM)
 | E | T16-T19 | SLA benchmarking |
 | F | T20 | Documentation |
 
-**Critical path identified**: T1→T2→T3→T7→T9→T12→T16→T17→T19→T20
-
-**Bottleneck noted**: T12 (FastAPI endpoint) blocks all downstream work
-
----
-
-## Step 8 — Model Selection Validation
-
-**Goal**: Confirm model choices with benchmark evidence
-
-**Key decisions documented**:
-
-| Decision | Choice | Evidence |
-|---|---|---|
-| Sentiment model | DistilRoBERTa-financial | 87.3% accuracy, 20ms/batch, 42M params |
-| Direction model | Bidirectional LSTM | F1=0.55, 28ms/500 symbols, 60-day window |
-| Rejected | GPT-3.5-turbo | 500-2000ms latency, API cost prohibitive |
-| Rejected | FinBERT | 80ms/batch, 4x slower than selected |
-| Rejected | Transformer | Overkill, harder to debug, slow |
-
-**SLA validation**: 468ms total for 500 symbols = 120x headroom vs 60s gate
+**Critical path**: T1→T2→T3→T7→T9→T12→T16→T17→T19→T20
+**Bottleneck**: T12 (FastAPI endpoint) blocks all downstream work
 
 ---
 
-## Step 9 — Responsible AI Review
+## Key Decisions Summary
 
-**Goal**: Identify and mitigate risks before deployment
-
-**Risk assessment summary**:
-
-| Risk Category | Level | Key Mitigation |
-|---|---|---|
-| Financial harm (55% accuracy) | HIGH | Mandatory disclaimer, circuit breaker |
-| Model bias (small-cap gap) | MEDIUM | Stratified accuracy reporting |
-| Regulatory (SEC/FINRA) | MEDIUM | Securities lawyer review, non-advice disclaimer |
-| Herding risk | MEDIUM | Rate limiting, confidence thresholding |
-| Privacy (social data) | LOW | Zero PII retention, delete after inference |
-
-**12-item deployment checklist** defined — all must pass before retail launch.
+| Step | Tool | Decision | Made By |
+|------|------|----------|---------|
+| 1 | Gemini | DistilRoBERTa + BiLSTM architecture | Gemini proposed, I accepted |
+| 2 | Gemini | X/Twitter as secondary source | **Me** — from market knowledge |
+| 3 | Claude | Rejected original α_SAM with `\|S_t\|` | **Me** — after Claude explained sign error |
+| 3 | Claude | Volume gate threshold = 1.1 | **Me** — from trading experience |
+| 4 | Claude | Added Alpha_Exhaustion factor | **Me** — recognized NVDA hype pattern |
+| 5 | Claude | 60/40 news/social weighting | **Me** — noise concern |
+| 6 | SpecKit | SPEC.md structure and FR-1 to FR-5 | SpecKit generated, I reviewed |
+| 7 | SpecKit | TASKS.md 20-task execution plan | SpecKit generated, I reviewed |
 
 ---
 
-## Key Learnings from Prompt Engineering Process
+## Key Learnings
 
-1. **Specificity reduces hallucination**: Adding exact hardware specs
-   (RTX 3060, 12GB VRAM) and numeric targets (60s SLA, >55% accuracy)
-   produced benchmark-grounded responses.
+1. **Specificity reduces hallucination** — Adding exact hardware specs and
+   numeric targets produced benchmark-grounded responses.
 
-2. **Formula review catches silent bugs**: The original α_SAM with `|S_t|`
-   would silently invert signals — only caught by explicit formula review prompt.
+2. **Formula review catches silent bugs** — The original α_SAM with `|S_t|`
+   would silently invert signals — only caught by explicit review prompt.
 
-3. **Secondary source framing matters**: Asking "is X/Twitter ok?" produced
-   a nuanced risk/benefit analysis rather than a yes/no answer.
+3. **Step-by-step > one-shot** — Separating research → formula → spec → tasks
+   into distinct prompts produced higher quality artifacts.
 
-4. **Step-by-step > one-shot**: Separating research → formula → spec → tasks
-   into distinct prompts produced higher quality artifacts than requesting all
-   at once.
+4. **SpecKit > Gemini/Claude for spec artifacts** — SpecKit output was more
+   structured and traceable than direct LLM generation.
 
-5. **Responsible AI must be prompted explicitly**: Without a dedicated review
-   step, financial harm and regulatory risks were not surfaced in earlier outputs.
+5. **Domain knowledge drives the decisions** — Every critical decision
+   (volume gate, 60/40 split, exhaustion formula) came from my own
+   understanding of markets, not from the AI.
