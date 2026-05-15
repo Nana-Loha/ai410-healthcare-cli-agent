@@ -7,9 +7,18 @@ External tools called by the Tool Node.
 """
 
 import os
+import re
+import json
 import anthropic
 
 client = anthropic.Anthropic(api_key=os.environ.get("ANTHROPIC_API_KEY"))
+
+
+def _parse_json(text: str) -> dict:
+    """Strip markdown code blocks and parse JSON."""
+    text = re.sub(r'```json\s*|\s*```', '', text).strip()
+    return json.loads(text)
+
 
 # ─────────────────────────────────────────
 # Tool 1 — Symptom Checker
@@ -36,9 +45,8 @@ Respond ONLY with valid JSON. No extra text."""
         messages=[{"role": "user", "content": prompt}]
     )
 
-    import json
     try:
-        result = json.loads(response.content[0].text)
+        result = _parse_json(response.content[0].text)
     except Exception:
         result = {
             "conditions": ["Unable to analyze"],
@@ -81,14 +89,13 @@ Return a JSON with:
 Respond ONLY with valid JSON. No extra text."""
 
     response = client.messages.create(
-        model="model="claude-opus-4-6",
+        model="claude-opus-4-6",
         max_tokens=500,
         messages=[{"role": "user", "content": prompt}]
     )
 
-    import json
     try:
-        result = json.loads(response.content[0].text)
+        result = _parse_json(response.content[0].text)
     except Exception:
         result = {
             "severity": "unknown",
@@ -130,9 +137,8 @@ Respond ONLY with valid JSON. No extra text."""
         messages=[{"role": "user", "content": prompt}]
     )
 
-    import json
     try:
-        result = json.loads(response.content[0].text)
+        result = _parse_json(response.content[0].text)
     except Exception:
         result = {
             "subjective": "Unable to parse",
