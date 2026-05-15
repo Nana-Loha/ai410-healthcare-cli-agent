@@ -208,8 +208,9 @@ def evaluator_node(state: AgentState) -> AgentState:
 def hitl_node(state: AgentState) -> AgentState:
     """
     Pauses execution and waits for human approval.
-    Required by Sprint 3 syllabus — at least 1 HITL checkpoint.
-    Triggered when: risk_level=high, emergency symptoms, or ICD-10 confirmation.
+    NOTE: input() is used for CLI mode.
+    When integrating with Streamlit, replace input() 
+    with st.button() and st.session_state for approval flow.
     """
     print("\n🚨 [HITL Node] Human approval required!")
     print("─" * 50)
